@@ -31,7 +31,7 @@ SDGS/
 ### 步驟一：Clone 專案到電腦
 
 ```bash
-git clone https://github.com/jdfiss/SDGS.git
+https://github.com/Goldaniga1/SDGS.git
 cd SDGS
 ```
 
