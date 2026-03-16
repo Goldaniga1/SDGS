@@ -73,7 +73,7 @@ git add 你的名字/
 git commit -m "add 你的名字 SDG page"
 git push
 ```
-
+> git push 前一定要先 add + commit，不然 Git 不知道你要推什麼上去。
 
 ---
 
