@@ -75,6 +75,13 @@ git push
 ```
 > git push 前一定要先 add + commit，不然 Git 不知道你要推什麼上去。
 
+```bash
+補充說明
+git add niga/          # 加 niga 資料夾內的所有檔案
+git add niga/index.html  # 只加 niga 裡面的 index.html
+git add .              # 加目前資料夾內所有變更（謹慎用）
+```
+
 ---
 
 ## 方案 B — 直接修改 niga's file
