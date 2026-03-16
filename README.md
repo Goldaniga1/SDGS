@@ -31,7 +31,7 @@ SDGS/
 ### 步驟一：Clone 專案到電腦
 > 下列指令僅適用於本repo，其他repo若需使用將Goldaniga1/SDGS.git改掉
 ```bash
-https://github.com/Goldaniga1/SDGS.git
+git clone https://github.com/Goldaniga1/SDGS.git
 cd SDGS
 ```
 
@@ -44,7 +44,7 @@ cd SDGS
 >
 > `cd SDGS` 則是把終端機的位置切換進去那個資料夾，
 > 之後的 git 指令才會針對這個 repo 生效。
-> 確認你的cmd內長這樣 `C:Users\YourName\SDGS`
+> 做完clone和cd後確認你的cmd內長這樣 `C:Users\YourName\SDGS`
 
 ### 步驟二：建立你的資料夾
 
@@ -60,12 +60,26 @@ mkdir 你的名字
 copy "你的檔案路徑\index.html" 你的名字\index.html
 ```
 
+如果還有圖片資料夾，也一起複製：
+
+```bash
+xcopy "你的圖片資料夾路徑" 你的名字\images\ /E /I
+```
+
 ### 步驟四：上傳到 GitHub
 
 ```bash
 git add 你的名字/
 git commit -m "add 你的名字 SDG page"
 git push
+```
+> git push 前一定要先 add + commit，不然 Git 不知道你要推什麼上去。
+
+```bash
+補充說明
+git add niga/          # 加 niga 資料夾內的所有檔案
+git add niga/index.html  # 只加 niga 裡面的 index.html
+git add .              # 加目前資料夾內所有變更（謹慎用）
 ```
 
 ---
