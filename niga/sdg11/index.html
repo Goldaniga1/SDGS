@@ -164,25 +164,42 @@
         .stat-card p { margin-top: 10px; font-size: 0.87rem; color: #666; line-height: 1.55; }
 
         /* ── Taiwan Focus ── */
-        #taiwan { background: white; }
-        .tw-focus-grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+        #taiwan { background: linear-gradient(160deg, #fff8ee 0%, #ffecd0 100%); }
+        .tw-focus-grid { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; perspective: 1200px; }
         .tw-city-card {
-            background: white;
-            border: 1px solid #f0e8d8;
-            border-radius: 18px;
-            padding: 28px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 22px;
+            padding: 28px 24px 22px;
             width: 310px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 8px 32px rgba(249,157,38,0.12), 0 1.5px 0 rgba(255,255,255,0.9) inset;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            will-change: transform;
+            transform-style: preserve-3d;
+            transition: box-shadow 0.3s;
+            cursor: pointer;
+            overflow: hidden;
         }
-        .tw-city-card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 14px 40px rgba(249,157,38,0.18);
+        .tw-city-card::before {
+            content: '';
+            position: absolute;
+            left: var(--mx, 50%); top: var(--my, 50%);
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, rgba(249,157,38,0.22) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: left 0.07s, top 0.07s;
+            z-index: 0;
         }
+        .tw-city-card > * { position: relative; z-index: 1; }
+        .tw-city-card:hover { box-shadow: 0 20px 60px rgba(249,157,38,0.28), 0 1.5px 0 rgba(255,255,255,0.9) inset; }
         .tw-city-card h3 {
             font-size: 1.05rem;
             color: var(--dark-orange);
-            margin-bottom: 20px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -199,21 +216,122 @@
             font-weight: bold;
             flex-shrink: 0;
         }
-        .progress-item { margin-bottom: 13px; }
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 5px;
+        .city-chart-wrap {
+            width: 100%; height: 220px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 4px;
         }
-        .progress-track { background: #f0f0f0; border-radius: 10px; height: 8px; overflow: hidden; }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--orange), var(--dark-orange));
-            border-radius: 10px;
-            width: 0%;
-            transition: width 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* ── Taiwan Interactive Map ── */
+        .tw-map-layout {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .tw-map-wrap {
+            flex: 1 1 55%;
+            min-width: 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+        /* Circular reveal overlay for city zoom transition */
+        #zoom-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 998;
+            background: #000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.45s ease;
+        }
+        .tw-map-wrap svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .tw-map-wrap svg path {
+            fill: #e8dfd0;
+            stroke: #fff;
+            stroke-width: 1.5;
+            transition: fill 0.35s;
+        }
+        .tw-map-wrap svg path.city-target { fill: rgba(249,157,38,0.22); cursor: pointer; }
+        .tw-map-wrap svg path.city-active  { fill: rgba(249,157,38,0.78); }
+        .pulse-dot {
+            fill: #f99d26;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        .pulse-dot.visible { opacity: 1; pointer-events: all; }
+        .pulse-ring {
+            fill: none;
+            stroke: #f99d26;
+            stroke-width: 2.5;
+            transform-box: fill-box;
+            transform-origin: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .pulse-ring.visible {
+            opacity: 1;
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        @keyframes pulse-ring {
+            0%   { transform: scale(1);   opacity: 0.85; }
+            100% { transform: scale(2.8); opacity: 0; }
+        }
+        .tw-map-panel {
+            flex: 0 0 360px;
+            background: rgba(255,255,255,0.75);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 22px;
+            padding: 32px 28px;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 8px 32px rgba(249,157,38,0.12);
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: sticky;
+            bottom: 32px;
+            align-self: flex-end;
+        }
+        .panel-default { text-align: center; color: #888; }
+        .panel-default h3 { color: var(--dark-orange); margin-bottom: 10px; font-size: 1.1rem; }
+        .panel-default p  { font-size: 0.87rem; line-height: 1.65; margin-bottom: 20px; }
+        .panel-city-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .panel-city-chips span {
+            background: rgba(249,157,38,0.1);
+            border: 1px solid rgba(249,157,38,0.3);
+            color: var(--dark-orange);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+        }
+        .panel-city { display: none; }
+        .panel-city.active { display: block; }
+        .panel-city-header {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
+        }
+        .panel-city-header h3 { font-size: 1.3rem; color: var(--dark-orange); margin: 0; }
+        .panel-subtitle { font-size: 0.78rem; color: #aaa; margin-top: 2px; }
+        .panel-btn {
+            margin-top: 10px; width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--orange), var(--dark-orange));
+            color: white; border: none; border-radius: 12px;
+            cursor: pointer; font-size: 0.9rem; font-weight: 600;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .panel-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        @media (max-width: 820px) {
+            .tw-map-layout { flex-direction: column; }
+            .tw-map-panel { flex: none; width: 100%; min-height: auto; box-sizing: border-box; }
         }
 
         /* ── Goals ── */
@@ -337,13 +455,19 @@
 
         /* ── Scene Modal ── */
         #scene-modal {
-            display: none;
+            display: flex;
             position: fixed;
             inset: 0;
             z-index: 999;
             background: #000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
         }
-        #scene-modal.active { display: flex; }
+        #scene-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
         #scene-bg {
             position: absolute;
             inset: 0;
@@ -713,6 +837,7 @@
             #hero h1 { font-size: 1.65rem; }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -777,113 +902,46 @@
     <!-- Taiwan Focus -->
     <section id="taiwan">
         <h2 data-en="Taiwan City Focus" data-zh="台灣城市焦點">Taiwan City Focus</h2>
-        <div class="tw-focus-grid">
+        <div class="tw-map-layout">
 
-            <div class="tw-city-card fade-up" onclick="openCity('taipei')">
-                <h3><div class="city-icon">北</div><span data-en="Taipei" data-zh="台北">Taipei</span></h3>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Recycling Rate" data-zh="資源回收率">Recycling Rate</span><span>55%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="55"></div></div>
+            <!-- SVG map injected here by JS -->
+            <div class="tw-map-wrap fade-up" id="tw-map-container"></div>
+
+            <!-- Data panel -->
+            <div class="tw-map-panel fade-up" style="transition-delay:.25s">
+
+                <!-- Default state (no city selected) -->
+                <div class="panel-default" id="panel-default">
+                    <h3 data-en="Explore Taiwan's Cities" data-zh="探索台灣城市">Explore Taiwan's Cities</h3>
+                    <p data-en="Hover over a highlighted city on the map to explore its SDG 11 sustainability metrics."
+                       data-zh="將滑鼠移到地圖上亮起的城市，探索其 SDG 11 永續指標。">Hover over a highlighted city on the map to explore its SDG 11 sustainability metrics.</p>
+                    <div class="panel-city-chips">
+                        <span>台北 Taipei</span>
+                        <span>新竹 Hsinchu</span>
+                        <span>台中 Taichung</span>
+                        <span>台南 Tainan</span>
+                        <span>高雄 Kaohsiung</span>
+                    </div>
                 </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Solar Energy" data-zh="太陽能普及率">Solar Energy</span><span>40%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="40"></div></div>
+
+                <!-- City detail (shown on hover) -->
+                <div class="panel-city" id="panel-city">
+                    <div class="panel-city-header">
+                        <div class="city-icon" id="panel-icon">北</div>
+                        <div>
+                            <h3 id="panel-name">Taipei</h3>
+                            <div class="panel-subtitle" data-en="Sustainability Profile" data-zh="永續發展指標">Sustainability Profile</div>
+                        </div>
+                    </div>
+                    <div class="city-chart-wrap">
+                        <canvas id="chart-panel"></canvas>
+                    </div>
+                    <button class="panel-btn" id="panel-explore">
+                        <span data-en="Explore city →" data-zh="探索城市 →">Explore city →</span>
+                    </button>
                 </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Public Transit" data-zh="大眾運輸使用率">Public Transit</span><span>65%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="65"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Green Coverage" data-zh="綠地覆蓋率">Green Coverage</span><span>35%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="35"></div></div>
-                </div>
-                <div class="card-explore"><span data-en="Explore city →" data-zh="探索城市 →">Explore city →</span></div>
+
             </div>
-
-            <div class="tw-city-card fade-up" style="transition-delay:.1s" onclick="openCity('kaohsiung')">
-                <h3><div class="city-icon">雄</div><span data-en="Kaohsiung" data-zh="高雄">Kaohsiung</span></h3>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Recycling Rate" data-zh="資源回收率">Recycling Rate</span><span>48%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="48"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Solar Energy" data-zh="太陽能普及率">Solar Energy</span><span>55%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="55"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Public Transit" data-zh="大眾運輸使用率">Public Transit</span><span>50%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="50"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Green Coverage" data-zh="綠地覆蓋率">Green Coverage</span><span>30%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="30"></div></div>
-                </div>
-                <div class="card-explore"><span data-en="Explore city →" data-zh="探索城市 →">Explore city →</span></div>
-            </div>
-
-            <div class="tw-city-card fade-up" style="transition-delay:.2s" onclick="openCity('taichung')">
-                <h3><div class="city-icon">中</div><span data-en="Taichung" data-zh="台中">Taichung</span></h3>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Recycling Rate" data-zh="資源回收率">Recycling Rate</span><span>50%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="50"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Solar Energy" data-zh="太陽能普及率">Solar Energy</span><span>45%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="45"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Public Transit" data-zh="大眾運輸使用率">Public Transit</span><span>45%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="45"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Green Coverage" data-zh="綠地覆蓋率">Green Coverage</span><span>40%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="40"></div></div>
-                </div>
-                <div class="card-explore"><span data-en="Explore city →" data-zh="探索城市 →">Explore city →</span></div>
-            </div>
-
-            <div class="tw-city-card fade-up" style="transition-delay:.1s" onclick="openCity('tainan')">
-                <h3><div class="city-icon">南</div><span data-en="Tainan" data-zh="台南">Tainan</span></h3>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Recycling Rate" data-zh="資源回收率">Recycling Rate</span><span>52%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="52"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Solar Energy" data-zh="太陽能普及率">Solar Energy</span><span>70%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="70"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Public Transit" data-zh="大眾運輸使用率">Public Transit</span><span>38%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="38"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Green Coverage" data-zh="綠地覆蓋率">Green Coverage</span><span>42%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="42"></div></div>
-                </div>
-                <div class="card-explore"><span data-en="Explore city →" data-zh="探索城市 →">Explore city →</span></div>
-            </div>
-
-            <div class="tw-city-card fade-up" style="transition-delay:.2s" onclick="openCity('hsinchu')">
-                <h3><div class="city-icon">竹</div><span data-en="Hsinchu" data-zh="新竹">Hsinchu</span></h3>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Recycling Rate" data-zh="資源回收率">Recycling Rate</span><span>49%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="49"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Solar Energy" data-zh="太陽能普及率">Solar Energy</span><span>50%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="50"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Public Transit" data-zh="大眾運輸使用率">Public Transit</span><span>42%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="42"></div></div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-label"><span data-en="Green Coverage" data-zh="綠地覆蓋率">Green Coverage</span><span>33%</span></div>
-                    <div class="progress-track"><div class="progress-fill" data-value="33"></div></div>
-                </div>
-                <div class="card-explore"><span data-en="Explore city →" data-zh="探索城市 →">Explore city →</span></div>
-            </div>
-
         </div>
     </section>
 
@@ -1236,6 +1294,11 @@
                     setTimeout(() => { bar.style.width = bar.dataset.value + '%'; }, 200);
                 });
 
+                // radar charts
+                el.querySelectorAll('canvas[id^="chart-"]').forEach(canvas => {
+                    buildRadarChart(canvas.id.replace('chart-', ''), currentLang);
+                });
+
                 observer.unobserve(el);
             });
         }, { threshold: 0.15 });
@@ -1253,6 +1316,23 @@
             card.addEventListener('mouseleave', () => { card.style.transform = ''; });
         });
 
+        /* ── 3D Tilt + Light Spot on city cards ── */
+        document.querySelectorAll('.tw-city-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width  - 0.5;
+                const y = (e.clientY - r.top)  / r.height - 0.5;
+                card.style.transform = `perspective(900px) rotateY(${x*14}deg) rotateX(${-y*14}deg) scale(1.04)`;
+                card.style.setProperty('--mx', ((e.clientX - r.left) / r.width  * 100) + '%');
+                card.style.setProperty('--my', ((e.clientY - r.top)  / r.height * 100) + '%');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+                card.style.setProperty('--mx', '50%');
+                card.style.setProperty('--my', '50%');
+            });
+        });
+
         /* ── City Lookup ── */
         const cityData = {
             taipei:     { name:{en:"Taipei, Taiwan",zh:"台北，台灣"},          transport:{en:"MRT + YouBike 24-hour city-wide system",zh:"捷運與 YouBike 涵蓋全市，全天候服務"},     energy:{en:"Solar incentives; green building regulations",zh:"太陽能獎勵；綠建築規範"},       green:{en:"Recycling rate 55%; strict pay-as-you-throw policy",zh:"資源回收率 55%；垃圾費隨袋徵收"},      highlight:{en:"Waste reduced by 67% since pay-as-you-throw policy",zh:"實施垃圾費隨袋徵收後垃圾量減少 67%"} },
@@ -1263,6 +1343,57 @@
             copenhagen: { name:{en:"Copenhagen, Denmark",zh:"哥本哈根，丹麥"},  transport:{en:"390 km bike lanes; 62% of commutes by bicycle",zh:"390 公里自行車道，62% 通勤騎車"},       energy:{en:"62% renewable; aiming carbon neutral by 2025",zh:"62% 再生能源，目標 2025 碳中和"},          green:{en:"Parks within 300 m of every resident",zh:"每位居民 300 公尺內皆有公園"},                         highlight:{en:"World's first city to target carbon neutrality",zh:"全球第一個以碳中和為目標的城市"} },
             singapore:  { name:{en:"Singapore",zh:"新加坡"},                   transport:{en:"MRT + bus covering 99% of the island",zh:"捷運與公車涵蓋全島 99%"},                        energy:{en:"Solar on 50% of public housing rooftops by 2030",zh:"2030 年前 50% 公共住宅屋頂裝設太陽能"}, green:{en:"47% green coverage; 300+ parks",zh:"47% 綠地覆蓋，300 座以上公園"},                             highlight:{en:"City in a Garden — urban greening masterplan since 1967",zh:"花園城市計畫，自 1967 年推動至今"} },
         };
+
+        /* ── City Radar Data ── */
+        const cityRadarData = {
+            taipei:    { values: [55, 40, 65, 35, 62] },
+            kaohsiung: { values: [48, 55, 50, 30, 48] },
+            taichung:  { values: [50, 45, 45, 40, 45] },
+            tainan:    { values: [52, 70, 38, 42, 58] },
+            hsinchu:   { values: [49, 50, 42, 33, 55] }
+        };
+        const radarLabels = {
+            en: ['Recycling', 'Solar', 'Transit', 'Green', 'Air Quality'],
+            zh: ['資源回收', '太陽能', '大眾運輸', '綠地覆蓋', '空氣品質']
+        };
+        const chartInstances = {};
+
+        function buildRadarChart(cityKey, lang) {
+            const canvas = document.getElementById('chart-' + cityKey);
+            if (!canvas) return;
+            if (chartInstances[cityKey]) chartInstances[cityKey].destroy();
+            chartInstances[cityKey] = new Chart(canvas, {
+                type: 'radar',
+                data: {
+                    labels: radarLabels[lang],
+                    datasets: [{
+                        data: cityRadarData[cityKey].values,
+                        backgroundColor: 'rgba(249,157,38,0.18)',
+                        borderColor: 'rgba(249,157,38,0.9)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#f99d26',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#f99d26',
+                        pointRadius: 4, pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    animation: { duration: 1200, easing: 'easeOutQuart' },
+                    responsive: true, maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            min: 0, max: 100,
+                            ticks: { stepSize: 25, display: false },
+                            grid: { color: 'rgba(249,157,38,0.15)' },
+                            angleLines: { color: 'rgba(249,157,38,0.2)' },
+                            pointLabels: { font: { size: 10 }, color: '#888' }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
 
         let currentLang = 'en';
 
@@ -1323,8 +1454,7 @@
                     category: { en: 'Transport', zh: '交通' },
                     title:    { en: 'Light Rail Along the Harbor', zh: '港邊輕軌' },
                     text:     { en: 'You board the circular light rail as it curves along the harbor front. In 2015, Kaohsiung became the first city in Taiwan to operate a modern light rail — connecting the port district to cultural venues, parks, and the MRT network.', zh: '你登上沿著港灣延伸的環狀輕軌。2015 年，高雄成為台灣第一個啟用現代輕軌的城市——連接港區、文化場所、公園與捷運網絡。' },
-                    photo:    'https://scontent-tpe1-1.xx.fbcdn.net/v/t39.30808-6/518005034_1137561975064517_7571882880614650106_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=13d280&_nc_ohc=N6BGgiuIdZwQ7kNvwFfxM5c&_nc_oc=AdlPmW8VXtqtgAqoP-o3P1xmSvujx7g6zZyex_6vX6mBTkWcJyxC6LrWfkJeKSEeJA_gOXga8wnuabgRbt-hi2bF&_nc_zt=23&_nc_ht=scontent-tpe1-1.xx&_nc_gid=P0poIdZvLxNFk-gCsHN7pg&_nc_ss=8&oh=00_AfwZbkQ75H9-XU7fgAkM1Q_ezYaIQUo6oEyYB1YgPEAgFA&oe=69BDA588'
-                },
+                    photo:    'https://i0.wp.com/www.right-media.news/wp-content/uploads/39181.jpg?fit=1567,1045&ssl=1'},
                 {
                     category: { en: 'Waterfront', zh: '水岸再生' },
                     title:    { en: 'Love River Reborn', zh: '愛河重生' },
@@ -1543,8 +1673,216 @@
             });
             const result = document.getElementById('city-result');
             if (result.style.display !== 'none') lookupCity();
+            Object.keys(chartInstances).forEach(k => buildRadarChart(k, currentLang));
+            // Re-render panel chart and name if a city is active
+            if (activeMapCity) {
+                document.getElementById('panel-name').textContent =
+                    currentLang === 'en' ? activeMapCity.info.en : activeMapCity.info.zh;
+                if (panelChartInstance) { panelChartInstance.destroy(); panelChartInstance = null; }
+                renderPanelChart(activeMapCity.info.key);
+            }
         }
+
+        /* ═══════════════════════════════════════════
+           Taiwan Interactive Map
+        ═══════════════════════════════════════════ */
+        const mapCities = {
+            'taipei-city':    { key: 'taipei',    icon: '北', en: 'Taipei',    zh: '台北' },
+            'hsinchu-city':   { key: 'hsinchu',   icon: '竹', en: 'Hsinchu',   zh: '新竹' },
+            'taichung-city':  { key: 'taichung',  icon: '中', en: 'Taichung',  zh: '台中' },
+            'tainan-city':    { key: 'tainan',    icon: '南', en: 'Tainan',    zh: '台南' },
+            'kaohsiung-city': { key: 'kaohsiung', icon: '雄', en: 'Kaohsiung', zh: '高雄' }
+        };
+
+        let panelChartInstance = null;
+        let activeMapCity = null; // { pathId, info }
+        const cityCenters = {}; // stores { cx, cy } per pathId after SVG loads
+
+        function renderPanelChart(cityKey) {
+            const canvas = document.getElementById('chart-panel');
+            if (!canvas) return;
+            if (panelChartInstance) { panelChartInstance.destroy(); panelChartInstance = null; }
+            panelChartInstance = new Chart(canvas, {
+                type: 'radar',
+                data: {
+                    labels: radarLabels[currentLang],
+                    datasets: [{
+                        data: cityRadarData[cityKey].values,
+                        backgroundColor: 'rgba(249,157,38,0.18)',
+                        borderColor: 'rgba(249,157,38,0.9)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#f99d26',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#f99d26',
+                        pointRadius: 4, pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    animation: { duration: 600, easing: 'easeOutQuart' },
+                    responsive: true, maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            min: 0, max: 100,
+                            ticks: { stepSize: 25, display: false },
+                            grid:        { color: 'rgba(249,157,38,0.15)' },
+                            angleLines:  { color: 'rgba(249,157,38,0.2)'  },
+                            pointLabels: { font: { size: 10 }, color: '#888' }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function highlightCity(pathId, info, svg) {
+            // Reset all target city fills
+            Object.keys(mapCities).forEach(id => {
+                const p = svg.getElementById(id);
+                if (p) { p.classList.remove('city-active'); }
+            });
+            // Highlight the hovered city
+            const active = svg.getElementById(pathId);
+            if (active) active.classList.add('city-active');
+
+            // Track active city for language toggle
+            activeMapCity = { pathId, info };
+
+            // Show panel
+            document.getElementById('panel-default').style.display = 'none';
+            const panelCity = document.getElementById('panel-city');
+            panelCity.style.display = 'block';
+            panelCity.classList.add('active');
+
+            // Update panel header
+            document.getElementById('panel-icon').textContent = info.icon;
+            document.getElementById('panel-name').textContent =
+                currentLang === 'en' ? info.en : info.zh;
+
+            // Wire up explore button
+            document.getElementById('panel-explore').onclick = () => openCity(info.key);
+
+            // Render radar chart
+            renderPanelChart(info.key);
+        }
+
+        function triggerMapEntrance(svg) {
+            const order = ['taipei-city', 'taichung-city', 'tainan-city', 'kaohsiung-city', 'hsinchu-city'];
+            order.forEach((id, i) => {
+                setTimeout(() => {
+                    const dot  = svg.querySelector(`.pulse-dot[data-city="${id}"]`);
+                    const ring = svg.querySelector(`.pulse-ring[data-city="${id}"]`);
+                    if (dot)  dot.classList.add('visible');
+                    if (ring) ring.classList.add('visible');
+                    // Brief flash
+                    const path = svg.getElementById(id);
+                    if (path) {
+                        path.style.fill = 'rgba(249,157,38,0.6)';
+                        setTimeout(() => { path.style.fill = ''; path.classList.add('city-target'); }, 450);
+                    }
+                }, i * 250);
+            });
+        }
+
+        function zoomToCity(pathId, info) {
+            const container = document.getElementById('tw-map-container');
+            const svg = container.querySelector('svg');
+            const center = cityCenters[pathId];
+            if (!svg || !center) { openCity(info.key); return; }
+
+            svg.style.pointerEvents = 'none';
+
+            // Phase 1: local map zooms into city (0.9s, user watches city grow)
+            const originX = (center.cx / 1000 * 100).toFixed(2) + '%';
+            const originY = (center.cy / 1295 * 100).toFixed(2) + '%';
+            svg.style.transformOrigin = `${originX} ${originY}`;
+            svg.style.transition = 'transform 0.9s cubic-bezier(0.4, 0, 1, 1)';
+            svg.style.transform  = 'scale(16)';
+
+            const overlay = document.getElementById('zoom-overlay');
+
+            // Phase 2 (550ms): city is large — fade to black over everything
+            setTimeout(() => {
+                overlay.style.transition = 'opacity 0.45s ease';
+                overlay.style.opacity    = '1';
+            }, 550);
+
+            // Phase 3 (1000ms): black covers screen — open modal, reset map behind black
+            setTimeout(() => {
+                openCity(info.key);          // modal: opacity 0 → 1 (0.8s)
+                // Reset map NOW — invisible behind black overlay, no flash
+                svg.style.transition      = 'none';
+                svg.style.transform       = '';
+                svg.style.transformOrigin = '';
+                svg.style.pointerEvents   = '';
+                // Wait for modal to be fully opaque before removing overlay
+                // modal = 0.8s + 100ms buffer; both are black so seam is invisible
+                setTimeout(() => {
+                    overlay.style.transition = 'opacity 0.25s ease';
+                    overlay.style.opacity    = '0';
+                }, 900);
+            }, 1000);
+        }
+
+        function initMap() {
+            fetch('https://cdn.jsdelivr.net/npm/@svg-maps/taiwan/taiwan.svg')
+                .then(r => r.text())
+                .then(svgText => {
+                    const container = document.getElementById('tw-map-container');
+                    container.innerHTML = svgText;
+                    const svg = container.querySelector('svg');
+                    svg.removeAttribute('width');
+                    svg.removeAttribute('height');
+                    svg.style.width  = '100%';
+                    svg.style.height = 'auto';
+
+                    // Setup each target city path + pulsing dot
+                    Object.entries(mapCities).forEach(([pathId, info]) => {
+                        const path = svg.getElementById(pathId);
+                        if (!path) return;
+                        path.classList.add('city-target');
+
+                        // Calculate dot position from bounding box
+                        const bb = path.getBBox();
+                        const cx = bb.x + bb.width  / 2;
+                        const cy = bb.y + bb.height / 2;
+                        cityCenters[pathId] = { cx, cy };
+
+                        // Pulse ring (behind dot)
+                        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        ring.setAttribute('cx', cx); ring.setAttribute('cy', cy); ring.setAttribute('r', '12');
+                        ring.classList.add('pulse-ring');
+                        ring.setAttribute('data-city', pathId);
+                        svg.appendChild(ring);
+
+                        // Solid dot (on top)
+                        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('r', '7');
+                        dot.classList.add('pulse-dot');
+                        dot.setAttribute('data-city', pathId);
+                        svg.appendChild(dot);
+
+                        // Hover events on both path and dot
+                        [path, dot].forEach(el => {
+                            el.addEventListener('mouseenter', () => highlightCity(pathId, info, svg));
+                            el.addEventListener('click', () => zoomToCity(pathId, info));
+                        });
+                    });
+
+                    // Staggered entrance (dots light up one by one)
+                    triggerMapEntrance(svg);
+                })
+                .catch(() => {
+                    document.getElementById('tw-map-container').innerHTML =
+                        '<p style="color:#aaa;text-align:center;padding:60px 20px">Map unavailable — check internet connection</p>';
+                });
+        }
+
+        // Start loading the map
+        initMap();
+
     </script>
 
+    <div id="zoom-overlay"></div>
 </body>
 </html>
