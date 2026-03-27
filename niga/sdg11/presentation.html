@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDG 11 期末提案簡報</title>
+  <style>
+    /* ── 變數 ── */
+    :root {
+      --orange:      #f99d26;
+      --dark-orange: #e07b00;
+      --navy1:       #0f0c29;
+      --navy2:       #302b63;
+      --navy3:       #24243e;
+      --cream:       #fff8ee;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', '微軟正黑體', Arial, sans-serif;
+      overflow: hidden;
+      background: #111;
+    }
+
+    /* ── 語言切換按鈕 (固定右上) ── */
+    #lang-btn {
+      position: fixed;
+      top: 18px; right: 22px;
+      z-index: 999;
+      background: white;
+      color: var(--dark-orange);
+      border: none;
+      padding: 7px 20px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: transform 0.15s;
+    }
+    #lang-btn:hover { transform: scale(1.07); }
+
+    /* ── 投影片容器 ── */
+    #slider {
+      display: flex;
+      width: 600vw; /* 6 slides × 100vw */
+      height: 100vh;
+      transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    /* ── 單張投影片 ── */
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ═══ 封面 (slide 1) ═══ */
+    .slide-cover {
+      background: linear-gradient(150deg, var(--navy1), var(--navy2), var(--navy3));
+      color: white;
+      text-align: center;
+    }
+    .slide-cover .badge {
+      display: inline-block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--orange);
+      border: 2px solid rgba(249,157,38,0.45);
+      background: rgba(249,157,38,0.1);
+      padding: 8px 28px;
+      border-radius: 30px;
+      letter-spacing: 2px;
+      margin-bottom: 28px;
+    }
+    .slide-cover h1 {
+      font-size: 3.4rem;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 18px;
+    }
+    .slide-cover h1 span { color: var(--orange); }
+    .slide-cover .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.75;
+      letter-spacing: 0.5px;
+    }
+    /* 背景裝飾圓 */
+    .slide-cover::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      border: 2px solid rgba(249,157,38,0.12);
+      top: -120px; left: -120px;
+      pointer-events: none;
+    }
+    .slide-cover::after {
+      content: '';
+      position: absolute;
+      width: 340px; height: 340px;
+      border-radius: 50%;
+      border: 2px solid rgba(249,157,38,0.08);
+      bottom: -80px; right: -80px;
+      pointer-events: none;
+    }
+
+    /* ═══ 內容頁共用 ═══ */
+    .slide-light  { background: var(--cream); }
+
+    .slide-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--dark-orange);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .slide-title::after {
+      content: '';
+      display: block;
+      width: 52px; height: 4px;
+      background: linear-gradient(90deg, var(--orange), var(--dark-orange));
+      border-radius: 2px;
+      margin: 10px auto 36px;
+    }
+
+    /* ── 統計卡片列 ── */
+    .stat-row {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 26px 28px;
+      min-width: 160px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--orange), var(--dark-orange));
+    }
+    .stat-card .num {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--orange);
+      line-height: 1;
+    }
+    .stat-card p { font-size: 0.82rem; color: #555; margin-top: 8px; line-height: 1.5; }
+
+    /* ── 描述段落 ── */
+    .desc {
+      text-align: center;
+      color: #444;
+      font-size: 0.97rem;
+      line-height: 1.8;
+      max-width: 700px;
+    }
+
+    /* ── 版面流程 ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .flow-item {
+      background: white;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--dark-orange);
+      box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+      text-align: center;
+      min-width: 110px;
+    }
+    .flow-arrow {
+      color: var(--orange);
+      font-size: 1.3rem;
+      margin: 0 6px;
+    }
+
+    /* ── 設計說明 ── */
+    .design-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .design-card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px 24px;
+      width: 200px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.07);
+      text-align: center;
+    }
+    .design-card .icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .design-card h4 { font-size: 0.88rem; color: var(--dark-orange); font-weight: 700; margin-bottom: 6px; }
+    .design-card p  { font-size: 0.78rem; color: #555; line-height: 1.5; }
+
+    /* ── 功能清單 ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 720px;
+    }
+    .feature-item {
+      background: white;
+      border-radius: 14px;
+      padding: 18px 22px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.07);
+    }
+    .feature-item .ficon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .feature-item h4 { font-size: 0.9rem; font-weight: 700; color: var(--dark-orange); margin-bottom: 4px; }
+    .feature-item p  { font-size: 0.78rem; color: #555; line-height: 1.5; }
+
+    /* ── 來源清單 ── */
+    .source-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 680px;
+      width: 100%;
+    }
+    .source-item {
+      background: white;
+      border-radius: 12px;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .source-badge {
+      background: linear-gradient(135deg, var(--orange), var(--dark-orange));
+      color: white;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .source-item p { font-size: 0.85rem; color: #444; line-height: 1.5; }
+
+    /* ── 創意亮點 ── */
+    .highlight-grid {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .highlight-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 22px;
+      width: 190px;
+      text-align: center;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .highlight-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--orange), var(--dark-orange));
+    }
+    .highlight-card .icon { font-size: 2rem; margin-bottom: 10px; }
+    .highlight-card h4 { font-size: 0.88rem; font-weight: 700; color: var(--dark-orange); margin-bottom: 6px; }
+    .highlight-card p  { font-size: 0.76rem; color: #555; line-height: 1.5; }
+
+    /* ═══ 導航 ═══ */
+    #nav-prev, #nav-next {
+      position: fixed;
+      top: 50%; transform: translateY(-50%);
+      z-index: 900;
+      background: rgba(249,157,38,0.85);
+      color: white;
+      border: none;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, transform 0.2s;
+    }
+    #nav-prev { left: 18px; }
+    #nav-next { right: 18px; }
+    #nav-prev:hover, #nav-next:hover {
+      background: var(--dark-orange);
+      transform: translateY(-50%) scale(1.1);
+    }
+    #nav-prev.hidden, #nav-next.hidden { opacity: 0; pointer-events: none; }
+
+    /* ── 點點 + 頁碼 ── */
+    #dots {
+      position: fixed;
+      bottom: 20px;
+      left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px;
+      z-index: 900;
+    }
+    .dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .dot.active {
+      background: var(--orange);
+      transform: scale(1.3);
+    }
+    #counter {
+      position: fixed;
+      bottom: 18px; right: 22px;
+      color: rgba(0, 0, 0, 0.55);
+      font-size: 0.8rem;
+      z-index: 900;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── 語言切換 ── -->
+<button id="lang-btn" onclick="toggleLang()">EN</button>
+
+<!-- ── 投影片容器 ── -->
+<div id="slider">
+
+  <!-- ══════════════════════════════════════
+       SLIDE 1 — 封面
+       修改：主標 h1、副標 .subtitle
+  ══════════════════════════════════════ -->
+  <div class="slide slide-cover">
+    <h1>
+      <span data-zh="SDG 11" data-en="SDG 11">SDG 11</span><br>
+      <span
+        data-zh="永續城市與社區"
+        data-en="Sustainable Cities and Communities">永續城市與社區</span>
+    </h1>
+
+    <p class="subtitle"
+      data-zh="網頁程式設計 — 期末成果發表"
+      data-en="Web Programming — Final Presentation">
+      網頁程式設計 — 期末成果發表
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 2 — SDG 主題介紹
+       修改：標題、描述段落、三個數字卡片
+  ══════════════════════════════════════ -->
+  <div class="slide slide-light" style="flex-direction:column;">
+    <h2 class="slide-title"
+      data-zh="SDG 11 主題介紹"
+      data-en="Introducing SDG 11">SDG 11 主題介紹</h2>
+
+    <div class="stat-row">
+      <!-- 數字卡片 1 -->
+      <div class="stat-card">
+        <div class="num">55%</div>
+        <p data-zh="全球人口目前居住在城市" data-en="of world population lives in cities">全球人口目前居住在城市</p>
+      </div>
+      <!-- 數字卡片 2 -->
+      <div class="stat-card">
+        <div class="num">8.28億</div>
+        <p data-zh="人口住在城市貧民窟" data-en="people live in urban slums">人口住在城市貧民窟</p>
+      </div>
+      <!-- 數字卡片 3 -->
+      <div class="stat-card">
+        <div class="num">3×</div>
+        <p data-zh="城市擴張速度是人口增長的 3 倍" data-en="cities expand 3× faster than population">城市擴張速度是人口增長的 3 倍</p>
+      </div>
+    </div>
+
+    <p class="desc"
+      data-zh="SDG 11 致力於讓城市更具包容性、安全性、韌性與永續性。<br>我們選擇此議題，是因為城市化進程影響超過半數人口，<br>台灣作為高密度都市化社會，正面臨交通、住宅與環境的多重挑戰。"
+      data-en="SDG 11 aims to make cities inclusive, safe, resilient and sustainable.<br>We chose this topic because urbanization affects more than half the world's population,<br>and Taiwan—as a highly urbanized society—faces challenges in transport, housing, and environment.">
+      SDG 11 致力於讓城市更具包容性、安全性、韌性與永續性。<br>我們選擇此議題，是因為城市化進程影響超過半數人口，<br>台灣作為高密度都市化社會，正面臨交通、住宅與環境的多重挑戰。
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 3 — 版面配置與設計概念
+       修改：版面流程節點、三張設計說明卡
+  ══════════════════════════════════════ -->
+  <div class="slide slide-light" style="flex-direction:column;">
+    <h2 class="slide-title"
+      data-zh="版面配置與設計概念"
+      data-en="Layout & Design Concept">版面配置與設計概念</h2>
+
+    <!-- 版面流程 -->
+    <div class="flow" style="margin-bottom:32px;">
+      <div class="flow-item" data-zh="Hero區塊" data-en="Hero">Hero區塊</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-item" data-zh="關鍵數據" data-en="Stats">關鍵數據</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-item" data-zh="台灣城市" data-en="Taiwan">台灣城市</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-item" data-zh="子目標" data-en="Targets">子目標</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-item" data-zh="國際案例" data-en="Cases">國際案例</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-item" data-zh="城市查詢" data-en="Lookup">城市查詢</div>
+    </div>
+
+    <!-- 設計說明 -->
+    <div class="design-row">
+      <div class="design-card">
+        <div class="icon">🎨</div>
+        <h4 data-zh="色彩系統" data-en="Color System">色彩系統</h4>
+        <p data-zh="SDG 11 官方橘色 #f99d26 為主調，深海軍藍漸層作為英雄背景" data-en="SDG 11 official orange #f99d26 as primary, deep navy gradient for hero">SDG 11 官方橘色 #f99d26 為主調，深海軍藍漸層作為英雄背景</p>
+      </div>
+      <div class="design-card">
+        <div class="icon">📐</div>
+        <h4 data-zh="版型策略" data-en="Layout Strategy">版型策略</h4>
+        <p data-zh="單頁捲動架構，Sticky 導航列，Flexbox / Grid 響應式卡片佈局" data-en="Single-page scroll, sticky nav, Flexbox/Grid responsive card layout">單頁捲動架構，Sticky 導航列，Flexbox / Grid 響應式卡片佈局</p>
+      </div>
+      <div class="design-card">
+        <div class="icon">🔤</div>
+        <h4 data-zh="字型排版" data-en="Typography">字型排版</h4>
+        <p data-zh="Segoe UI 系統字型，多層字重（400 / 700 / 900）建立視覺層次" data-en="Segoe UI system font, multi-weight (400/700/900) visual hierarchy">Segoe UI 系統字型，多層字重（400 / 700 / 900）建立視覺層次</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 4 — 特殊功能展示
+       修改：四個功能卡片的標題與說明
+  ══════════════════════════════════════ -->
+  <div class="slide slide-light" style="flex-direction:column;">
+    <h2 class="slide-title"
+      data-zh="特殊功能"
+      data-en="Special Features">特殊功能</h2>
+
+    <div class="feature-grid">
+      <!-- 功能 1 -->
+      <div class="feature-item">
+        <div class="ficon">✨</div>
+        <div>
+          <h4 data-zh="粒子動畫背景" data-en="Particle Canvas Animation">粒子動畫背景</h4>
+          <p data-zh="英雄區以 Canvas API 繪製隨機粒子，呈現動態城市感" data-en="Hero uses Canvas API to render random particles for a dynamic city feel">英雄區以 Canvas API 繪製隨機粒子，呈現動態城市感</p>
+        </div>
+      </div>
+      <!-- 功能 2 -->
+      <div class="feature-item">
+        <div class="ficon">🌐</div>
+        <div>
+          <h4 data-zh="中英雙語切換" data-en="Bilingual Toggle (ZH/EN)">中英雙語切換</h4>
+          <p data-zh="全頁 data-en / data-zh 屬性配合 JS，一鍵切換所有文字" data-en="All text uses data-en/data-zh attributes; one click switches the whole page">全頁 data-en / data-zh 屬性配合 JS，一鍵切換所有文字</p>
+        </div>
+      </div>
+      <!-- 功能 3 -->
+      <div class="feature-item">
+        <div class="ficon">🏙️</div>
+        <div>
+          <h4 data-zh="城市場景 Modal" data-en="City Scene Modal">城市場景 Modal</h4>
+          <p data-zh="點擊城市案例開啟沉浸式全螢幕彈窗，含圖文輪播與分類標籤" data-en="Click a city case to open an immersive full-screen modal with image carousel and category tags">點擊城市案例開啟沉浸式全螢幕彈窗，含圖文輪播與分類標籤</p>
+        </div>
+      </div>
+      <!-- 功能 4 -->
+      <div class="feature-item">
+        <div class="ficon">🔍</div>
+        <div>
+          <h4 data-zh="城市永續查詢工具" data-en="City Sustainability Lookup">城市永續查詢工具</h4>
+          <p data-zh="下拉選單即時顯示各城市的永續指標，含捷運覆蓋率、空氣品質等數據" data-en="Dropdown shows real-time sustainability metrics per city: transit coverage, air quality, etc.">下拉選單即時顯示各城市的永續指標，含捷運覆蓋率、空氣品質等數據</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 5 — 內容來源
+       修改：四個來源項目的標籤和說明
+  ══════════════════════════════════════ -->
+  <div class="slide slide-light" style="flex-direction:column;">
+    <h2 class="slide-title"
+      data-zh="內容來源說明"
+      data-en="Content Sources">內容來源說明</h2>
+
+    <div class="source-list">
+      <!-- 來源 1 -->
+      <div class="source-item">
+        <span class="source-badge" data-zh="圖片" data-en="Images">圖片</span>
+        <p data-zh="Unsplash 免費授權攝影圖庫（城市景觀、大眾運輸、太陽能等主題）" data-en="Unsplash royalty-free photography (cityscapes, transit, solar energy themes)">Unsplash 免費授權攝影圖庫（城市景觀、大眾運輸、太陽能等主題）</p>
+      </div>
+      <!-- 來源 2 -->
+      <div class="source-item">
+        <span class="source-badge" data-zh="數據" data-en="Data">數據</span>
+        <p data-zh="聯合國 SDG 官方數據庫、UN-Habitat 城市化報告（55%、8.28 億、3× 等統計）" data-en="UN SDG official database & UN-Habitat urbanization reports (55%, 828M, 3× stats)">聯合國 SDG 官方數據庫、UN-Habitat 城市化報告（55%、8.28 億、3× 等統計）</p>
+      </div>
+      <!-- 來源 3 -->
+      <div class="source-item">
+        <span class="source-badge" data-zh="台灣照片" data-en="TW Photos">台灣照片</span>
+        <p data-zh="各城市官方臉書粉絲頁（台中 BRT、基隆夜市等）、Penn State 學術網站圖片" data-en="City official Facebook pages (Taichung BRT, Keelung Night Market), Penn State academic images">各城市官方臉書粉絲頁（台中 BRT、基隆夜市等）、Penn State 學術網站圖片</p>
+      </div>
+      <!-- 來源 4 -->
+      <div class="source-item">
+        <span class="source-badge" data-zh="文字內容" data-en="Text">文字內容</span>
+        <p data-zh="Wikipedia、政府公開資料、聯合國永續發展目標官方說明文件" data-en="Wikipedia, government open data, UN SDG official documentation">Wikipedia、政府公開資料、聯合國永續發展目標官方說明文件</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 6 — 創意亮點
+       修改：四個亮點卡片的 icon、標題、說明
+  ══════════════════════════════════════ -->
+  <div class="slide slide-light" style="flex-direction:column;">
+    <h2 class="slide-title"
+      data-zh="創意亮點"
+      data-en="Creative Highlights">創意亮點</h2>
+
+    <div class="highlight-grid">
+      <!-- 亮點 1 -->
+      <div class="highlight-card">
+        <div class="icon">🌐</div>
+        <h4 data-zh="完整雙語支援" data-en="Full Bilingual Support">完整雙語支援</h4>
+        <p data-zh="全站中英切換，一個按鈕涵蓋所有文字，適合國際展示" data-en="Full-site ZH/EN toggle — one button, all text, ideal for international audiences">全站中英切換，一個按鈕涵蓋所有文字，適合國際展示</p>
+      </div>
+      <!-- 亮點 2 -->
+      <div class="highlight-card">
+        <div class="icon">🏙️</div>
+        <h4 data-zh="沉浸式城市探索" data-en="Immersive City Modal">沉浸式城市探索</h4>
+        <p data-zh="全螢幕場景彈窗結合圖片輪播，讓使用者「走進」永續城市" data-en="Full-screen scene modal with carousel lets users 'step into' sustainable cities">全螢幕場景彈窗結合圖片輪播，讓使用者「走進」永續城市</p>
+      </div>
+      <!-- 亮點 3 -->
+      <div class="highlight-card">
+        <div class="icon">✨</div>
+        <h4 data-zh="粒子動態視覺" data-en="Particle Animation">粒子動態視覺</h4>
+        <p data-zh="純 JavaScript Canvas 粒子特效，無需額外函式庫，視覺吸睛" data-en="Pure JS Canvas particles — no libraries needed, visually striking">純 JavaScript Canvas 粒子特效，無需額外函式庫，視覺吸睛</p>
+      </div>
+      <!-- 亮點 4 -->
+      <div class="highlight-card">
+        <div class="icon">📊</div>
+        <h4 data-zh="互動式資料查詢" data-en="Interactive Data Lookup">互動式資料查詢</h4>
+        <p data-zh="選單即時切換城市，呈現個別永續指標，資料視覺化呈現" data-en="Dropdown instantly switches city data, showing individual sustainability metrics visually">選單即時切換城市，呈現個別永續指標，資料視覺化呈現</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #slider -->
+
+<!-- ── 導航按鈕 ── -->
+<button id="nav-prev" onclick="go(-1)">&#8592;</button>
+<button id="nav-next" onclick="go(1)">&#8594;</button>
+
+<!-- ── 點點指示器 ── -->
+<div id="dots"></div>
+
+<!-- ── 頁碼 ── -->
+<div id="counter"></div>
+
+<script>
+  /* ── 語言 ── */
+  let lang = 'zh';
+
+  function toggleLang() {
+    lang = lang === 'zh' ? 'en' : 'zh';
+    document.getElementById('lang-btn').textContent = lang === 'zh' ? 'EN' : '中文';
+    document.querySelectorAll('[data-zh]').forEach(el => {
+      const txt = lang === 'zh' ? el.dataset.zh : el.dataset.en;
+      if (txt !== undefined) el.innerHTML = txt;
+    });
+  }
+
+  /* ── 投影片導航 ── */
+  const TOTAL = 6;
+  let cur = 0;
+
+  const slider  = document.getElementById('slider');
+  const prevBtn = document.getElementById('nav-prev');
+  const nextBtn = document.getElementById('nav-next');
+  const counter = document.getElementById('counter');
+  const dotsEl  = document.getElementById('dots');
+
+  // 建立點點
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+
+  function goTo(n) {
+    cur = Math.max(0, Math.min(TOTAL - 1, n));
+    slider.style.transform = `translateX(-${cur * 100}vw)`;
+    document.querySelectorAll('.dot').forEach((d, i) =>
+      d.classList.toggle('active', i === cur));
+    counter.textContent = `${cur + 1} / ${TOTAL}`;
+    prevBtn.classList.toggle('hidden', cur === 0);
+    nextBtn.classList.toggle('hidden', cur === TOTAL - 1);
+  }
+
+  function go(dir) { goTo(cur + dir); }
+
+  // 鍵盤方向鍵
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    go(-1);
+  });
+
+  // 初始化
+  goTo(0);
+</script>
+</body>
+</html>
